@@ -399,3 +399,114 @@ pre {
     }
 }
 
+
+.acts-overview {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 18px;
+    box-shadow: 0 22px 50px rgba(15, 23, 42, 0.22);
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.accordion-list {
+    margin-top: 20px;
+    display: grid;
+    gap: 14px;
+}
+
+.act-accordion {
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    overflow: hidden;
+}
+
+.act-accordion summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.act-accordion summary::-webkit-details-marker {
+    display: none;
+}
+
+.act-accordion summary span {
+    font-weight: 800;
+    color: #0f172a;
+    font-size: 17px;
+}
+
+.act-accordion summary small {
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.act-accordion[open] summary {
+    border-bottom: 1px solid #dbeafe;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+}
+
+.accordion-content {
+    padding: 22px;
+    color: #334155;
+    line-height: 1.75;
+}
+
+.accordion-content h3 {
+    margin-top: 0;
+    color: #0f172a;
+    font-size: 24px;
+}
+
+.accordion-content h4 {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: #1e3a8a;
+    font-size: 18px;
+}
+
+.accordion-content h5 {
+    margin-top: 18px;
+    margin-bottom: 6px;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.accordion-content p {
+    margin: 10px 0;
+}
+
+.accordion-content blockquote {
+    margin: 18px 0;
+    padding: 16px 18px;
+    border-left: 4px solid #2563eb;
+    background: #eff6ff;
+    color: #1e3a8a;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.accordion-content ol {
+    margin-top: 12px;
+    padding-left: 22px;
+}
+
+.accordion-content li {
+    margin: 8px 0;
+}
+
+@media (max-width: 700px) {
+    .act-accordion summary {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
