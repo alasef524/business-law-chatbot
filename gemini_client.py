@@ -1,172 +1,159 @@
 import os
+import time
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
 api_key = os.getenv("GEMINI_API_KEY", "").strip()
-model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+primary_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+
+BACKUP_MODELS = [
+    primary_model,
+    "gemini-2.5-flash-lite"
+]
 
 
-def direct_case_answer(question: str):
-    q = question.lower()
-
-    # Specific goods + perishing before delivery
-    if (
-        ("horse" in q or "car" in q or "toyota" in q)
-        and ("dies" in q or "died" in q or "perish" in q or "perished" in q or "destroyed" in q)
-    ):
-        return """Act:
-Sale of Goods Act, 1930
-
-Section:
-Section 7
-
-Topic:
-Perishing of specific goods
-
-Answer:
-The horse is a specific good. Since the horse dies naturally before delivery without the fault of either party, the contract becomes void because the specific goods have perished.
+def fallback_answer():
+    return """The AI model is temporarily busy. Please try again in a few moments.
 
 Reason:
-The contract was for A's only white horse, so the goods were clearly identified at the time of the contract. Since that particular horse no longer exists before delivery, the contract cannot be performed."""
-
-    # Specific goods identification
-    if (
-        ("car" in q or "toyota" in q or "registration" in q or "horse" in q)
-        and ("type" in q or "goods" in q or "involved" in q or "classification" in q)
-    ):
-        return """Act:
-Sale of Goods Act, 1930
-
-Section:
-Goods / Classification of goods
-
-Topic:
-Specific and ascertained goods
-
-Answer:
-The goods are specific goods because they are clearly identified and agreed upon at the time of the contract.
-
-Reason:
-The item is not described generally. It is separately identified, such as a particular car with a registration number or a particular horse. Therefore, it is specific/ascertained goods."""
-
-    return None
+Gemini is currently experiencing high demand, so the request could not be completed right now."""
 
 
-def fallback_answer(question, matched_laws):
-    direct = direct_case_answer(question)
-    if direct:
-        return direct
-
-    if not matched_laws:
-        return "I could not find this information in the provided Acts."
-
-    law = matched_laws[0]
-
-    return f"""Gemini is not active. This is fallback mode.
-
-Act:
-{law['act_name']}
-
-Section:
-{law['section_no']}
-
-Topic:
-{law['section_title']}
-
-Answer:
-{law['content']}
-
-Reason:
-The answer is taken from the saved description because Gemini is not active."""
-    
-
-def generate_answer(question, matched_laws):
-    if not matched_laws:
-        return "I could not find this information in the provided Acts."
-
-    # Direct case rules first for common teacher case questions
-    direct = direct_case_answer(question)
-    if direct:
-        return direct
-
+def generate_answer(question, matched_laws=None):
     if not api_key or api_key == "paste_your_gemini_api_key_here":
-        return fallback_answer(question, matched_laws)
+        return "Gemini is not active. Please check GEMINI_API_KEY in environment variables."
 
     from google import genai
 
     client = genai.Client(api_key=api_key)
 
-    law_context = ""
-
-    for law in matched_laws:
-        law_context += f"""
-Act Name: {law['act_name']}
-Section: {law['section_no']}
-Topic: {law['section_title']}
-Description:
-{law['content']}
----
-"""
-
     prompt = f"""
 You are a Business Law chatbot for a student project.
 
-Answer the user's question only from the provided descriptions.
+You may answer ONLY from these five Acts:
+1. Companies Act, 1994
+2. Contract Act, 1872
+3. Sale of Goods Act, 1930
+4. Negotiable Instruments Act, 1881
+5. Partnership Act, 1932
 
-Important:
-The user may ask case/problem questions. Do not dump the full description. Identify the issue, apply the rule, and give a direct answer.
+Important rules:
+1. Do not use any law outside these five Acts.
+2. If the question is a case/problem question, identify the legal issue and apply the relevant Act.
+3. If the question asks "can", "is", "does", "whether", or clearly needs a yes/no answer, start with "Yes." or "No."
+4. After yes/no, give reasoning.
+5. Then mention Act/Law.
+6. Then mention Section No.
+7. Keep the answer short, exam-style, and direct.
+8. Do not dump long theory.
+9. If the question is outside the five Acts, say: "This question is outside the selected five Acts."
+10. If the exact section is uncertain, mention the most relevant Act and say "Exact section not confidently found" instead of inventing.
 
-Strict rules:
-1. Do not use outside knowledge.
-2. Do not invent sections.
-3. Use only the most relevant Act and section.
-4. Always mention Act, Section, Topic, Answer, and Reason.
-5. Keep the answer short and exam-style.
-6. If the answer is not found in the provided descriptions, say:
-   "I could not find this information in the provided Acts."
+Use this format for yes/no questions:
 
-Use this exact format:
+Yes/No:
+[Yes or No in one sentence]
 
-Act:
-[Act name]
+Reasoning:
+[Apply the law to the facts]
 
-Section:
+Act/Law:
+[Relevant Act]
+
+Section No:
 [Relevant section]
 
-Topic:
-[Topic/title]
+Use this format for non-yes/no questions:
 
 Answer:
 [Direct answer]
 
-Reason:
-[Apply the rule to the facts]
+Reasoning:
+[Short explanation]
 
-Provided descriptions:
-{law_context}
+Act/Law:
+[Relevant Act]
 
-User question:
+Section No:
+[Relevant section]
+
+Examples:
+
+Question:
+A buyer purchases a used mobile phone without checking its condition. Later, he discovers minor scratches. Can the buyer claim compensation?
+
+Answer:
+No.
+
+Reasoning:
+The buyer purchased a used phone without checking its condition. Minor scratches are defects that could normally be discovered by ordinary inspection. Under the principle of caveat emptor, the buyer is expected to examine the goods before buying. Therefore, he generally cannot claim compensation.
+
+Act/Law:
+Sale of Goods Act, 1930
+
+Section No:
+Section 16
+
+Question:
+Rahim writes and signs a document stating, "I promise to pay Karim Tk. 50,000 on 1 July 2026." Is this a promissory note?
+
+Answer:
+Yes.
+
+Reasoning:
+The document is in writing, signed by Rahim, contains an unconditional promise to pay a certain sum of money, and names Karim as the payee. Therefore, it satisfies the essentials of a promissory note.
+
+Act/Law:
+Negotiable Instruments Act, 1881
+
+Section No:
+Section 4
+
+Question:
+A agrees to sell his only white horse to B for Tk. 50,000. Before delivery, the horse dies naturally without the fault of either party.
+
+Answer:
+The contract becomes void.
+
+Reasoning:
+The horse is a specific good because it is clearly identified as A's only white horse. Since that specific good perishes before delivery without fault of either party, the contract cannot be performed.
+
+Act/Law:
+Sale of Goods Act, 1930
+
+Section No:
+Section 7
+
+Now answer this user question:
+
 {question}
-
-Final answer:
 """
 
-    try:
-        response = client.models.generate_content(
-            model=model_name,
-            contents=prompt
-        )
+    last_error = None
 
-        if not response.text:
-            return fallback_answer(question, matched_laws)
+    for model in BACKUP_MODELS:
+        for attempt in range(2):
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt
+                )
 
-        return response.text.strip()
+                if response.text:
+                    return response.text.strip()
 
-    except Exception as error:
-        return f"""Gemini API error:
-{error}
+            except Exception as error:
+                last_error = str(error)
 
-Fallback answer:
+                if "503" in last_error or "UNAVAILABLE" in last_error or "high demand" in last_error.lower():
+                    time.sleep(2)
+                    continue
 
-{fallback_answer(question, matched_laws)}"""
+                return f"Gemini API error: {error}"
+
+    return f"""{fallback_answer()}
+
+Technical note:
+Last Gemini error: {last_error}
+"""
