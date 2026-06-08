@@ -7,22 +7,54 @@ load_dotenv(override=True)
 api_key = os.getenv("GEMINI_API_KEY", "").strip()
 primary_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
 
-BACKUP_MODELS = [
-    primary_model,
-    "gemini-2.5-flash-lite"
-]
+BACKUP_MODELS = []
+
+if primary_model:
+    BACKUP_MODELS.append(primary_model)
+
+if "gemini-2.5-flash-lite" not in BACKUP_MODELS:
+    BACKUP_MODELS.append("gemini-2.5-flash-lite")
 
 
-def fallback_answer():
-    return """The AI model is temporarily busy. Please try again in a few moments.
+def clean_api_error(error_text: str) -> str:
+    if (
+        "429" in error_text
+        or "RESOURCE_EXHAUSTED" in error_text
+        or "Quota exceeded" in error_text
+        or "quota" in error_text.lower()
+    ):
+        return """AI quota is temporarily finished.
 
 Reason:
-Gemini is currently experiencing high demand, so the request could not be completed right now."""
+The Gemini API free usage limit has been reached. Please try again later."""
+
+    if (
+        "503" in error_text
+        or "UNAVAILABLE" in error_text
+        or "high demand" in error_text.lower()
+    ):
+        return """Gemini is temporarily busy.
+
+Reason:
+The model is currently experiencing high demand. Please try again after a short time."""
+
+    if "API key" in error_text or "INVALID_ARGUMENT" in error_text:
+        return """Gemini API key problem.
+
+Reason:
+The API key may be missing, invalid, or incorrectly added in the environment variables."""
+
+    return """Something went wrong while generating the answer.
+
+Please try again."""
 
 
 def generate_answer(question, matched_laws=None):
     if not api_key or api_key == "paste_your_gemini_api_key_here":
-        return "Gemini is not active. Please check GEMINI_API_KEY in environment variables."
+        return """Gemini is not active.
+
+Reason:
+GEMINI_API_KEY is missing or invalid in environment variables."""
 
     from google import genai
 
@@ -49,6 +81,7 @@ Important rules:
 8. Do not dump long theory.
 9. If the question is outside the five Acts, say: "This question is outside the selected five Acts."
 10. If the exact section is uncertain, mention the most relevant Act and say "Exact section not confidently found" instead of inventing.
+11. Do not mention Gemini, API, model, prompt, or technical details.
 
 Use this format for yes/no questions:
 
@@ -144,16 +177,22 @@ Now answer this user question:
                     return response.text.strip()
 
             except Exception as error:
-                last_error = str(error)
+                error_text = str(error)
+                last_error = error_text
 
-                if "503" in last_error or "UNAVAILABLE" in last_error or "high demand" in last_error.lower():
+                if (
+                    "503" in error_text
+                    or "UNAVAILABLE" in error_text
+                    or "high demand" in error_text.lower()
+                ):
                     time.sleep(2)
                     continue
 
-                return f"Gemini API error: {error}"
+                return clean_api_error(error_text)
 
-    return f"""{fallback_answer()}
+    if last_error:
+        return clean_api_error(last_error)
 
-Technical note:
-Last Gemini error: {last_error}
-"""
+    return """Something went wrong while generating the answer.
+
+Please try again."""
