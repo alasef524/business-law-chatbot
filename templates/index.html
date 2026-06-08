@@ -27,7 +27,40 @@
         </div>
     </header>
 
-    <main class="container">
+    
+<main class="container">
+
+        {% if message %}
+        <div class="message">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <section class="chat-panel">
+            <div class="panel-header">
+                <h2>Ask a Business Law Question</h2>
+                <p>Example: What makes an agreement a valid contract?</p>
+            </div>
+
+            <form action="/ask" method="post" class="question-form">
+                <textarea name="question" placeholder="Write your question here..." required></textarea>
+                <button type="submit">Ask Chatbot</button>
+            </form>
+        </section>
+
+        {% if question %}
+        <section class="result-card question-card">
+            <h2>Your Question</h2>
+            <p>{{ question }}</p>
+        </section>
+        {% endif %}
+
+        {% if answer %}
+        <section class="result-card answer-card">
+            <h2>Answer</h2>
+            <pre>{{ answer }}</pre>
+        </section>
+        {% endif %}
 
         <section class="acts-overview">
             <div class="section-heading">
@@ -494,69 +527,8 @@
             </div>
         </section>
 
-        {% if message %}
-        <div class="message">
-            {{ message }}
-        </div>
-        {% endif %}
-
-        <section class="chat-panel">
-            <div class="panel-header">
-                <h2>Ask a Business Law Question</h2>
-                <p>Example: What makes an agreement a valid contract?</p>
-            </div>
-
-            <form action="/ask" method="post" class="question-form">
-                <textarea name="question" placeholder="Write your question here..." required></textarea>
-                <button type="submit">Ask Chatbot</button>
-            </form>
-        </section>
-
-        {% if question %}
-        <section class="result-card question-card">
-            <h2>Your Question</h2>
-            <p>{{ question }}</p>
-        </section>
-        {% endif %}
-
-        {% if answer %}
-        <section class="result-card answer-card">
-            <h2>Answer</h2>
-            <pre>{{ answer }}</pre>
-        </section>
-        {% endif %}
-
-        <section class="laws-section">
-            <div class="section-heading">
-                <h2>Saved Law Sections</h2>
-                <p>These are the legal sections currently used by the chatbot.</p>
-            </div>
-
-            {% if laws %}
-                <div class="laws-grid">
-                    {% for law in laws %}
-                    <div class="law-card">
-                        <div class="law-top">
-                            <span class="act-name">{{ law.act_name }}</span>
-                            <span class="section-badge">{{ law.section_no }}</span>
-                        </div>
-
-                        {% if law.section_title %}
-                        <h3>{{ law.section_title }}</h3>
-                        {% endif %}
-
-                        <p>{{ law.content }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-box">
-                    No law sections added yet.
-                </div>
-            {% endif %}
-        </section>
-
     </main>
+
 
     <footer class="footer">
         <p>Educational project only. This chatbot does not provide professional legal advice.</p>
