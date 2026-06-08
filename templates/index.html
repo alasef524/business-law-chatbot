@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Business Law Chatbot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Business Law Chatbot</h1>
+    <p class="subtitle">
+        Answers questions from selected business law Acts only.
+    </p>
+
+    {% if message %}
+    <div class="message">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <h2>Ask a Question</h2>
+
+        <form action="/ask" method="post">
+            <textarea name="question" placeholder="Example: What makes an agreement a valid contract?" required></textarea>
+            <button type="submit">Ask Chatbot</button>
+        </form>
+    </div>
+
+    {% if question %}
+    <div class="section question-box">
+        <h2>Your Question</h2>
+        <p>{{ question }}</p>
+    </div>
+    {% endif %}
+
+    {% if answer %}
+    <div class="section answer-box">
+        <h2>Answer</h2>
+        <pre>{{ answer }}</pre>
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <h2>Add Law Section</h2>
+
+        <form action="/add-law" method="post">
+
+            <label>Act Name</label>
+            <select name="act_name" required>
+                {% for act in acts %}
+                <option value="{{ act }}">{{ act }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Section Number</label>
+            <input type="text" name="section_no" placeholder="Example: Section 10" required>
+
+            <label>Section Title</label>
+            <input type="text" name="section_title" placeholder="Example: What agreements are contracts">
+
+            <label>Section Content</label>
+            <textarea name="content" placeholder="Paste/write the law section here..." required></textarea>
+
+            <button type="submit">Add Section</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Saved Law Sections</h2>
+
+        {% if laws %}
+            {% for law in laws %}
+            <div class="law-card">
+                <h3>{{ law.act_name }}</h3>
+                <p><strong>Section:</strong> {{ law.section_no }}</p>
+
+                {% if law.section_title %}
+                <p><strong>Title:</strong> {{ law.section_title }}</p>
+                {% endif %}
+
+                <p>{{ law.content }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No law sections added yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
