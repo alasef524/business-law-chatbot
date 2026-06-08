@@ -10,21 +10,39 @@ model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 def rule_based_answer(question, matched_laws):
     q = question.lower()
 
+    # Sale of Goods: specific goods destroyed/perished before delivery
+    if (
+        ("die" in q or "dies" in q or "died" in q or "perish" in q or "perished" in q or "destroyed" in q)
+        and ("sell" in q or "sale" in q or "delivery" in q or "goods" in q or "horse" in q)
+    ):
+        return """Act: Sale of Goods Act, 1930
+Section: Section 7 / Perishing of specific goods
+Topic: Specific goods and perishing of goods
+
+Answer:
+The white horse is a specific good because it is clearly identified as A's only white horse. Since the horse dies naturally before delivery without the fault of either party, the contract becomes void/avoided because the specific goods have perished.
+
+Simple Explanation:
+The contract was made for one particular horse, not any horse in general. Since that specific horse no longer exists before delivery, the contract cannot be performed.
+
+Based on:
+A contract for the sale of specific goods becomes void if the goods perish or become so damaged that they no longer answer the description in the contract."""
+
     # Sale of Goods: specific/ascertained goods
     if (
-        ("goods" in q or "car" in q or "toyota" in q or "registration" in q)
+        ("goods" in q or "car" in q or "toyota" in q or "registration" in q or "horse" in q)
         and ("type" in q or "involved" in q or "classification" in q or "what" in q)
-        and ("car" in q or "toyota" in q or "registration" in q or "red" in q)
+        and ("car" in q or "toyota" in q or "registration" in q or "red" in q or "horse" in q or "white" in q)
     ):
         return """Act: Sale of Goods Act, 1930
 Section: Goods / Classification of goods
 Topic: Specific and ascertained goods
 
 Answer:
-The car is a specific good because it is clearly identified and agreed upon at the time of the contract.
+The goods are specific goods because they are clearly identified and agreed upon at the time of the contract.
 
 Simple Explanation:
-Rahim agrees to sell a red Toyota car with registration no. DHA-1234 to Karim. Since the car is separately identified by its description and registration number, it is a specific/ascertained good.
+The goods are not described generally. They are separately identified, such as a particular car or a particular horse. Therefore, they are specific/ascertained goods.
 
 Based on:
 Goods may be specific and ascertained when they can be identified or recognized as separate things."""
@@ -45,7 +63,7 @@ Based on:
 Future goods are goods which will be manufactured, produced, or acquired by the seller after the making of the contract of sale."""
 
     # Sale of Goods: contingent goods
-    if "contingent" in q or "provided" in q or "if he is able" in q or "depends" in q or "condition" in q:
+    if "contingent" in q or "provided" in q or "if he is able" in q or "depends" in q:
         return """Act: Sale of Goods Act, 1930
 Section: Contingent Goods
 Topic: Contingent goods
