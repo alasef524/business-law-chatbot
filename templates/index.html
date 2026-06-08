@@ -6,87 +6,96 @@
 </head>
 <body>
 
-<div class="container">
+<div class="page-wrapper">
 
-    <h1>Business Law Chatbot</h1>
-    <p class="subtitle">
-        Answers questions from selected business law Acts only.
-    </p>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="badge">AI-Based Business Law Assistant</div>
+            <h1>Business Law Chatbot</h1>
+            <p>
+                Ask questions from selected Bangladeshi business law Acts.
+                The chatbot answers based only on the provided legal sections.
+            </p>
 
-    {% if message %}
-    <div class="message">
-        {{ message }}
-    </div>
-    {% endif %}
-
-    <div class="section">
-        <h2>Ask a Question</h2>
-
-        <form action="/ask" method="post">
-            <textarea name="question" placeholder="Example: What makes an agreement a valid contract?" required></textarea>
-            <button type="submit">Ask Chatbot</button>
-        </form>
-    </div>
-
-    {% if question %}
-    <div class="section question-box">
-        <h2>Your Question</h2>
-        <p>{{ question }}</p>
-    </div>
-    {% endif %}
-
-    {% if answer %}
-    <div class="section answer-box">
-        <h2>Answer</h2>
-        <pre>{{ answer }}</pre>
-    </div>
-    {% endif %}
-
-    <div class="section">
-        <h2>Add Law Section</h2>
-
-        <form action="/add-law" method="post">
-
-            <label>Act Name</label>
-            <select name="act_name" required>
-                {% for act in acts %}
-                <option value="{{ act }}">{{ act }}</option>
-                {% endfor %}
-            </select>
-
-            <label>Section Number</label>
-            <input type="text" name="section_no" placeholder="Example: Section 10" required>
-
-            <label>Section Title</label>
-            <input type="text" name="section_title" placeholder="Example: What agreements are contracts">
-
-            <label>Section Content</label>
-            <textarea name="content" placeholder="Paste/write the law section here..." required></textarea>
-
-            <button type="submit">Add Section</button>
-        </form>
-    </div>
-
-    <div class="section">
-        <h2>Saved Law Sections</h2>
-
-        {% if laws %}
-            {% for law in laws %}
-            <div class="law-card">
-                <h3>{{ law.act_name }}</h3>
-                <p><strong>Section:</strong> {{ law.section_no }}</p>
-
-                {% if law.section_title %}
-                <p><strong>Title:</strong> {{ law.section_title }}</p>
-                {% endif %}
-
-                <p>{{ law.content }}</p>
+            <div class="acts-row">
+                <span>Companies Act, 1994</span>
+                <span>Contract Act, 1872</span>
+                <span>Sale of Goods Act, 1930</span>
+                <span>Negotiable Instruments Act, 1881</span>
+                <span>Partnership Act, 1932</span>
             </div>
-            {% endfor %}
-        {% else %}
-            <p>No law sections added yet.</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        {% if message %}
+        <div class="message">
+            {{ message }}
+        </div>
         {% endif %}
-    </div>
+
+        <section class="chat-panel">
+            <div class="panel-header">
+                <h2>Ask a Business Law Question</h2>
+                <p>Example: What makes an agreement a valid contract?</p>
+            </div>
+
+            <form action="/ask" method="post" class="question-form">
+                <textarea name="question" placeholder="Write your question here..." required></textarea>
+                <button type="submit">Ask Chatbot</button>
+            </form>
+        </section>
+
+        {% if question %}
+        <section class="result-card question-card">
+            <h2>Your Question</h2>
+            <p>{{ question }}</p>
+        </section>
+        {% endif %}
+
+        {% if answer %}
+        <section class="result-card answer-card">
+            <h2>Answer</h2>
+            <pre>{{ answer }}</pre>
+        </section>
+        {% endif %}
+
+        <section class="laws-section">
+            <div class="section-heading">
+                <h2>Saved Law Sections</h2>
+                <p>These are the legal sections currently used by the chatbot.</p>
+            </div>
+
+            {% if laws %}
+                <div class="laws-grid">
+                    {% for law in laws %}
+                    <div class="law-card">
+                        <div class="law-top">
+                            <span class="act-name">{{ law.act_name }}</span>
+                            <span class="section-badge">{{ law.section_no }}</span>
+                        </div>
+
+                        {% if law.section_title %}
+                        <h3>{{ law.section_title }}</h3>
+                        {% endif %}
+
+                        <p>{{ law.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-box">
+                    No law sections added yet.
+                </div>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>Educational project only. This chatbot does not provide professional legal advice.</p>
+    </footer>
 
 </div>
 
