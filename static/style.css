@@ -1,104 +1,290 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f3f4f6;
     margin: 0;
-    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 30%),
+        #0f172a;
     color: #111827;
 }
 
+.page-wrapper {
+    min-height: 100vh;
+}
+
+.hero {
+    padding: 70px 20px 55px;
+    color: white;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85)),
+        linear-gradient(135deg, #0f172a, #1e3a8a);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero-content {
+    width: 92%;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.16);
+    color: #bfdbfe;
+    border: 1px solid rgba(147, 197, 253, 0.3);
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: 48px;
+    letter-spacing: -1px;
+}
+
+.hero p {
+    max-width: 720px;
+    margin: 18px auto 0;
+    color: #cbd5e1;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+.acts-row {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.acts-row span {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e5e7eb;
+    padding: 9px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 13px;
+}
+
 .container {
-    width: 90%;
-    max-width: 950px;
-    margin: 30px auto;
+    width: 92%;
+    max-width: 1100px;
+    margin: -28px auto 40px;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 5px;
+.chat-panel,
+.result-card,
+.laws-section {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 18px;
+    box-shadow: 0 22px 50px rgba(15, 23, 42, 0.22);
 }
 
-.subtitle {
-    text-align: center;
-    color: #555;
-    margin-bottom: 25px;
+.chat-panel {
+    padding: 28px;
 }
 
-.section {
-    background: #ffffff;
-    padding: 22px;
+.panel-header h2,
+.section-heading h2,
+.result-card h2 {
+    margin: 0;
+    color: #0f172a;
+}
+
+.panel-header p,
+.section-heading p {
+    margin: 8px 0 0;
+    color: #64748b;
+}
+
+.question-form {
     margin-top: 20px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-}
-
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold;
-}
-
-input,
-textarea,
-select {
-    width: 100%;
-    padding: 12px;
-    margin-top: 7px;
-    box-sizing: border-box;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 15px;
 }
 
 textarea {
-    min-height: 110px;
+    width: 100%;
+    min-height: 130px;
     resize: vertical;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #cbd5e1;
+    outline: none;
+    font-size: 16px;
+    font-family: inherit;
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+textarea:focus {
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 button {
-    margin-top: 15px;
-    padding: 12px 20px;
-    background: #111827;
-    color: white;
+    margin-top: 14px;
+    padding: 13px 22px;
     border: none;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
     font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
 }
 
 button:hover {
-    background: #374151;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
 
 .message {
     background: #dcfce7;
     border: 1px solid #86efac;
-    padding: 14px;
-    border-radius: 8px;
-    margin-top: 15px;
+    color: #14532d;
+    padding: 15px 18px;
+    border-radius: 14px;
+    margin-bottom: 18px;
 }
 
-.question-box {
+.result-card {
+    margin-top: 22px;
+    padding: 24px;
+}
+
+.question-card {
     background: #eff6ff;
 }
 
-.answer-box {
+.answer-card {
     background: #f0fdf4;
+}
+
+.result-card p {
+    color: #334155;
+    line-height: 1.7;
 }
 
 pre {
     white-space: pre-wrap;
-    font-family: Arial, sans-serif;
-    font-size: 15px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15.5px;
+    color: #1f2937;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+.laws-section {
+    margin-top: 24px;
+    padding: 28px;
+}
+
+.laws-grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
 }
 
 .law-card {
-    border: 1px solid #ddd;
-    background: #fafafa;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 12px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px;
+    transition: 0.2s ease;
+}
+
+.law-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+}
+
+.law-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.act-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.section-badge {
+    flex-shrink: 0;
+    background: #e0f2fe;
+    color: #075985;
+    border: 1px solid #bae6fd;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .law-card h3 {
-    margin-top: 0;
+    margin: 0 0 10px;
+    color: #0f172a;
+    font-size: 18px;
+}
+
+.law-card p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.65;
+    font-size: 14.5px;
+}
+
+.empty-box {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+}
+
+.footer {
+    text-align: center;
+    color: #cbd5e1;
+    padding: 28px 20px 40px;
+    font-size: 14px;
+}
+
+@media (max-width: 700px) {
+    .hero {
+        padding: 48px 16px 42px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .container {
+        width: 94%;
+        margin-top: -20px;
+    }
+
+    .chat-panel,
+    .result-card,
+    .laws-section {
+        border-radius: 15px;
+        padding: 20px;
+    }
 }
