@@ -94,13 +94,12 @@ def ask_question(
 ):
     matched_laws = search_laws(question)
 
-    if not matched_laws:
-        answer = "I could not find this information in the provided Acts."
-        matched_law_id = None
-    else:
-        answer = generate_answer(question, matched_laws)
-        matched_law_id = matched_laws[0]["id"]
+    # Important:
+    # Always send the question to Gemini.
+    # If it is outside the five Acts, gemini_client.py will answer generally.
+    answer = generate_answer(question, matched_laws)
 
+    matched_law_id = matched_laws[0]["id"] if matched_laws else None
     save_chat(question, answer, matched_law_id)
 
     laws = get_all_laws()
