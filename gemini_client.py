@@ -1,3 +1,4 @@
+@'
 import os
 import time
 from dotenv import load_dotenv
@@ -5,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 api_key = os.getenv("GEMINI_API_KEY", "").strip()
-primary_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+primary_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite").strip()
 
 BACKUP_MODELS = []
 
@@ -14,6 +15,9 @@ if primary_model:
 
 if "gemini-2.5-flash-lite" not in BACKUP_MODELS:
     BACKUP_MODELS.append("gemini-2.5-flash-lite")
+
+if "gemini-2.5-flash" not in BACKUP_MODELS:
+    BACKUP_MODELS.append("gemini-2.5-flash")
 
 
 def clean_api_error(error_text: str) -> str:
@@ -61,29 +65,27 @@ GEMINI_API_KEY is missing or invalid in environment variables."""
     client = genai.Client(api_key=api_key)
 
     prompt = f"""
-You are a Business Law chatbot for a student project.
+You are a helpful AI chatbot for a student project.
 
-You may answer ONLY from these five Acts:
+The chatbot has two answer modes:
+
+MODE 1: Business Law Mode
+Use this mode when the question is related to any of these five Acts:
 1. Companies Act, 1994
 2. Contract Act, 1872
 3. Sale of Goods Act, 1930
 4. Negotiable Instruments Act, 1881
 5. Partnership Act, 1932
 
-Important rules:
-1. Do not use any law outside these five Acts.
-2. If the question is a case/problem question, identify the legal issue and apply the relevant Act.
-3. If the question asks "can", "is", "does", "whether", or clearly needs a yes/no answer, start with "Yes." or "No."
-4. After yes/no, give reasoning.
-5. Then mention Act/Law.
-6. Then mention Section No.
-7. Keep the answer short, exam-style, and direct.
-8. Do not dump long theory.
-9. If the question is outside the five Acts, say: "This question is outside the selected five Acts."
-10. If the exact section is uncertain, mention the most relevant Act and say "Exact section not confidently found" instead of inventing.
-11. Do not mention Gemini, API, model, prompt, or technical details.
+For questions related to these five Acts:
+- Identify the legal issue.
+- Apply the relevant Act.
+- Mention Act/Law.
+- Mention Section No.
+- If the question needs a yes/no answer, start with "Yes." or "No."
+- Keep the answer exam-style, short, and direct.
 
-Use this format for yes/no questions:
+Business Law yes/no answer format:
 
 Yes/No:
 [Yes or No in one sentence]
@@ -97,7 +99,7 @@ Act/Law:
 Section No:
 [Relevant section]
 
-Use this format for non-yes/no questions:
+Business Law non-yes/no answer format:
 
 Answer:
 [Direct answer]
@@ -110,6 +112,32 @@ Act/Law:
 
 Section No:
 [Relevant section]
+
+MODE 2: General Answer Mode
+Use this mode when the question is outside the five Acts.
+
+For outside questions:
+- Answer normally and helpfully.
+- Do not force Act/Law.
+- Do not invent section numbers.
+- Keep it clear and concise.
+- Add this note at the end:
+  "Note: This question is outside the selected five Acts used in the Business Law project."
+
+General answer format:
+
+Answer:
+[General answer]
+
+Note:
+This question is outside the selected five Acts used in the Business Law project.
+
+Important rules:
+1. Do not invent fake sections.
+2. Do not mention Gemini, API, model, prompt, or technical details.
+3. If the question is related to the five Acts but exact section is uncertain, say "Exact section not confidently found."
+4. For legal case questions, answer like a business law student: issue, reasoning, Act/Law, section.
+5. Do not give long unnecessary theory unless the user asks for details.
 
 Examples:
 
@@ -144,19 +172,13 @@ Section No:
 Section 4
 
 Question:
-A agrees to sell his only white horse to B for Tk. 50,000. Before delivery, the horse dies naturally without the fault of either party.
+What is photosynthesis?
 
 Answer:
-The contract becomes void.
+Photosynthesis is the process by which green plants use sunlight, carbon dioxide, and water to produce food in the form of glucose. Oxygen is released as a by-product.
 
-Reasoning:
-The horse is a specific good because it is clearly identified as A's only white horse. Since that specific good perishes before delivery without fault of either party, the contract cannot be performed.
-
-Act/Law:
-Sale of Goods Act, 1930
-
-Section No:
-Section 7
+Note:
+This question is outside the selected five Acts used in the Business Law project.
 
 Now answer this user question:
 
@@ -196,3 +218,4 @@ Now answer this user question:
     return """Something went wrong while generating the answer.
 
 Please try again."""
+'@ | Set-Content gemini_client.py
