@@ -1,4 +1,3 @@
-@'
 import os
 import time
 from dotenv import load_dotenv
@@ -67,7 +66,7 @@ GEMINI_API_KEY is missing or invalid in environment variables."""
     prompt = f"""
 You are a helpful AI chatbot for a student project.
 
-The chatbot has two answer modes:
+The chatbot has two modes.
 
 MODE 1: Business Law Mode
 Use this mode when the question is related to any of these five Acts:
@@ -120,7 +119,6 @@ For outside questions:
 - Answer normally and helpfully.
 - Do not force Act/Law.
 - Do not invent section numbers.
-- Keep it clear and concise.
 - Add this note at the end:
   "Note: This question is outside the selected five Acts used in the Business Law project."
 
@@ -137,7 +135,7 @@ Important rules:
 2. Do not mention Gemini, API, model, prompt, or technical details.
 3. If the question is related to the five Acts but exact section is uncertain, say "Exact section not confidently found."
 4. For legal case questions, answer like a business law student: issue, reasoning, Act/Law, section.
-5. Do not give long unnecessary theory unless the user asks for details.
+5. Keep answers clear and concise.
 
 Examples:
 
@@ -218,4 +216,3 @@ Now answer this user question:
     return """Something went wrong while generating the answer.
 
 Please try again."""
-'@ | Set-Content gemini_client.py
